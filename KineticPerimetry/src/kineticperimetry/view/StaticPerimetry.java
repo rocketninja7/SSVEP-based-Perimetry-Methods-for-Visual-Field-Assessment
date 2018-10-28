@@ -20,15 +20,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import kineticperimetry.model.DegPixConverter;
 import kineticperimetry.model.StimuliVector;
 
 public class StaticPerimetry extends Stage {
 	
-	final static double limit=30;
-	final static double separationAngle=5;
-	final static double distToScreen=23.4;
+	final static double limit=40;
+	final static double separationAngle=10;
 	final static double tempFreq=0.01;
 	final static int promptDuration=1000;
 	
@@ -50,9 +50,6 @@ public class StaticPerimetry extends Stage {
 	
 	boolean procedureIsFinished;
 	
-	double fixX;
-	double fixY;
-	
 	Animation currAnimation;
 	
 	int currDisplayedIndex;
@@ -65,6 +62,8 @@ public class StaticPerimetry extends Stage {
 	int step2Size;
 	
 	public StaticPerimetry() {
+		initStyle(StageStyle.UNDECORATED);
+		
 		youCanRespondToStimulus=false;
 		randomGenerator=new Random();
 		stimuliVectors=new ArrayList<>();
@@ -74,9 +73,7 @@ public class StaticPerimetry extends Stage {
 		displayPane.setMinWidth(Screen.getPrimary().getBounds().getWidth());
 		displayPane.setMinHeight(Screen.getPrimary().getBounds().getHeight());
 		displayPane.setStyle("-fx-background-color: hsb(" + 0 + ", " + 0 + "%, " + 0 + "%);");
-		fixX=Screen.getPrimary().getBounds().getWidth()/2;
-		fixY=Screen.getPrimary().getBounds().getHeight()/2;
-		Ellipse fixationPoint=new Ellipse(fixX, fixY, 10, 10);
+		Ellipse fixationPoint=new Ellipse(DegPixConverter.fixX, DegPixConverter.fixY, 10, 10);
 		fixationPoint.setFill(Color.WHITE);
 		displayPane.getChildren().add(fixationPoint);
 		Scene scene=new Scene(displayPane);
@@ -105,11 +102,18 @@ public class StaticPerimetry extends Stage {
                     youCanRespondToStimulus = false;
 				}
 			}
+			
+			if(option.equals(KeyCode.ESCAPE)) {
+				setIconified(true);
+			}
 		});
 		
-		for(double i = -limit; i <= limit; i += separationAngle) {
-			for(double j = -limit; j <= limit; j += separationAngle) {
-				stimuliVectors.add(new StimuliVector(i, j, 1, 1, fixX, fixY, 3000, 100, distToScreen));
+		for(double i = -(int)(limit/separationAngle)*separationAngle; i <= (int)(limit/separationAngle)*separationAngle; i += separationAngle) {
+			for(double j = -(int)(limit/separationAngle)*separationAngle; j <= (int)(limit/separationAngle)*separationAngle; j += separationAngle) {
+				if((i==0&&j==0)||i*i+j*j>limit*limit) {
+					continue;
+				}
+				stimuliVectors.add(new StimuliVector(i, j, 1, 1, 3000, 100));
 				arrayListActiveStimuliIndices.add(stimuliVectors.size() - 1);
 			}
 		}
@@ -158,11 +162,11 @@ public class StaticPerimetry extends Stage {
         /* Initialize cumulative time interval */
         int cumulativeTimeInterval = 0;
         
-        KeyFrame keyFramePromptStimulus = new KeyFrame(Duration.millis(cumulativeTimeInterval), event -> {
+        /*KeyFrame keyFramePromptStimulus = new KeyFrame(Duration.millis(cumulativeTimeInterval), event -> {
         	Ellipse prompt = new Ellipse(currentlyDisplayedStimulus.getStartXPix(), currentlyDisplayedStimulus.getStartYPix(), currentlyDisplayedStimulus.getRadiusX(), currentlyDisplayedStimulus.getRadiusY());
         	int brightness = currentlyDisplayedStimulus.getBrightness();
 
-            /* Create and set color for stimulus */
+            //Create and set color for stimulus 
             Color color = Color.hsb(
                     0,
                     0,
@@ -205,7 +209,7 @@ public class StaticPerimetry extends Stage {
         
         timelineStimulus.getKeyFrames().add(keyFrameRemovePrompt);
         
-        cumulativeTimeInterval += 1000;
+        cumulativeTimeInterval += 1000;*/
 
         /* Create KeyFrame for displaying stimulus */
         KeyFrame keyFrameDisplayStimulus = new KeyFrame(Duration.millis(cumulativeTimeInterval), event -> {
@@ -224,14 +228,16 @@ public class StaticPerimetry extends Stage {
 
             currentlyDisplayedStimulus.getShape().setFill(color);
             currentlyDisplayedStimulus.getShape().setStroke(color);
+            //System.out.println(currentlyDisplayedStimulus.getStartXDeg()+","+currentlyDisplayedStimulus.getStartYDeg());
+            //System.out.println(DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg(), fixX, distToScreen)+","+DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg(), fixY, distToScreen));
 
             /* Add stimulus to display pane */
             displayPane.getChildren().add(currentlyDisplayedStimulus.getShape());
             
             try {
             	PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
-            	double xPix=DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg()+response*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg()), fixX, distToScreen);
-            	double yPix=DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg()+response*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg()), fixY, distToScreen);
+            	double xPix=DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg()+response*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg()));
+            	double yPix=DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg()+response*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg()));
 				pw.println(System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color);
 				pw.close();
 			} catch (FileNotFoundException e) {
@@ -245,8 +251,8 @@ public class StaticPerimetry extends Stage {
             	}
             	@Override
 				protected void interpolate(double arg0) {
-					currentlyDisplayedStimulus.getShape().setTranslateX(DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg()+arg0*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg()), fixX, distToScreen)-currentlyDisplayedStimulus.getStartXPix());
-					currentlyDisplayedStimulus.getShape().setTranslateY(DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg()+arg0*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg()), fixY, distToScreen)-currentlyDisplayedStimulus.getStartYPix());
+					currentlyDisplayedStimulus.getShape().setTranslateX(DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg()+arg0*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg()))-currentlyDisplayedStimulus.getStartXPix());
+					currentlyDisplayedStimulus.getShape().setTranslateY(DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg()+arg0*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg()))-currentlyDisplayedStimulus.getStartYPix());
             		response = arg0;
             	}
             };
@@ -370,7 +376,7 @@ public class StaticPerimetry extends Stage {
         			} catch (FileNotFoundException e) {
         				e.printStackTrace();
         			}
-            		StaticResults staticResults = new StaticResults(limit, separationAngle, fixX, fixY, distToScreen, stimuliVectors);
+            		StaticResults staticResults = new StaticResults(limit, separationAngle, stimuliVectors);
             		staticResults.show();
             	/*}
             	step++;*/

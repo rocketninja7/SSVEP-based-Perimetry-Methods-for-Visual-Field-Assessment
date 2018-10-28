@@ -15,20 +15,11 @@ public class StaticResults extends Stage {
 	
 	private double interval;
 	
-	private double fixX;
-	
-	private double fixY;
-	
-	private double distToScreen;
-	
 	private ArrayList<StimuliVector> data;
 	
-	public StaticResults(double limit, double interval, double fixX, double fixY, double distToScreen, ArrayList<StimuliVector> data) {
+	public StaticResults(double limit, double interval, ArrayList<StimuliVector> data) {
 		this.limit = limit;
 		this.interval = interval;
-		this.fixX = fixX;
-		this.fixY = fixY;
-		this.distToScreen = distToScreen;
 		this.data = data;
 		
 		Pane pane = new Pane();
@@ -62,7 +53,7 @@ public class StaticResults extends Stage {
 		        );
 			}
 			Ellipse ellipse=(Ellipse)data.get(i).getShape();
-			ellipse=new Ellipse(fixX/2+ellipse.getCenterX()/2, fixY/2+ellipse.getCenterY()/2, ellipse.getRadiusX()/2, ellipse.getRadiusY()/2);
+			ellipse=new Ellipse(DegPixConverter.fixX/2+ellipse.getCenterX()/2, DegPixConverter.fixY/2+ellipse.getCenterY()/2, ellipse.getRadiusX()/2, ellipse.getRadiusY()/2);
 			ellipse.setFill(color);
 			ellipse.setStroke(Color.WHITE);
 			ellipse.setVisible(true);

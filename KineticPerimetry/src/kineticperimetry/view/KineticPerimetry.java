@@ -22,6 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import kineticperimetry.model.DegPixConverter;
 import kineticperimetry.model.StimuliVector;
@@ -30,8 +31,7 @@ public class KineticPerimetry extends Stage {
 	
 	final static double eps=0.0001;
 	final static double limit=45;
-	final static double separationAngle=10;
-	final static double distToScreen=23.4;
+	final static double separationAngle=12;
 	final static double tempFreq=0.01;
 	final static double spatFreq=10/3;
 	
@@ -53,9 +53,6 @@ public class KineticPerimetry extends Stage {
 	
 	boolean procedureIsFinished;
 	
-	int fixX;
-	int fixY;
-	
 	Animation currAnimation;
 	
 	int currDisplayedIndex;
@@ -68,6 +65,8 @@ public class KineticPerimetry extends Stage {
 	int step2Size;
 	
 	public KineticPerimetry() {
+		initStyle(StageStyle.UNDECORATED);
+		
 		youCanRespondToStimulus=false;
 		randomGenerator=new Random();
 		stimuliVectors=new ArrayList<>();
@@ -77,9 +76,7 @@ public class KineticPerimetry extends Stage {
 		displayPane.setMinWidth(Screen.getPrimary().getBounds().getWidth());
 		displayPane.setMinHeight(Screen.getPrimary().getBounds().getHeight());
 		displayPane.setStyle("-fx-background-color: hsb(" + 0 + ", " + 0 + "%, " + 0 + "%);");
-		fixX=(int)Screen.getPrimary().getBounds().getWidth()/2;
-		fixY=(int)Screen.getPrimary().getBounds().getHeight()/2;
-		Ellipse fixationPoint=new Ellipse(fixX, fixY, 10, 10);
+		Ellipse fixationPoint=new Ellipse(DegPixConverter.fixX, DegPixConverter.fixY, 10, 10);
 		fixationPoint.setFill(Color.WHITE);
 		displayPane.getChildren().add(fixationPoint);
 		Scene scene=new Scene(displayPane);
@@ -112,9 +109,13 @@ public class KineticPerimetry extends Stage {
                     }*/
 				}
 			}
+			
+			if(option.equals(KeyCode.ESCAPE)) {
+				setIconified(true);
+			}
 		});
 		for(double i=0;i<360;i+=separationAngle) {
-			stimuliVectors.add(new StimuliVector(limit*Math.cos(i/180*Math.PI), limit*Math.sin(i/180*Math.PI), 0, 0, 10, 10, fixX, fixY, tempFreq/spatFreq, 100, distToScreen));
+			stimuliVectors.add(new StimuliVector(limit*Math.cos(i/180*Math.PI), limit*Math.sin(i/180*Math.PI), 0, 0, 10, 10, tempFreq/spatFreq, 100));
 			arrayListActiveStimuliIndices.add(stimuliVectors.size()-1);
 		}
 		step1Size = stimuliVectors.size();
@@ -185,8 +186,8 @@ public class KineticPerimetry extends Stage {
             
             try {
             	PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
-            	double xPix=DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg()+response*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg()), fixX, distToScreen);
-            	double yPix=DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg()+response*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg()), fixY, distToScreen);
+            	double xPix=DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg()+response*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg()));
+            	double yPix=DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg()+response*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg()));
 				pw.println(System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color);
 				pw.close();
 			} catch (FileNotFoundException e) {
@@ -200,8 +201,8 @@ public class KineticPerimetry extends Stage {
             	}
             	@Override
 				protected void interpolate(double arg0) {
-					currentlyDisplayedStimulus.getShape().setTranslateX(DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg()+arg0*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg()), fixX, distToScreen)-currentlyDisplayedStimulus.getStartXPix());
-					currentlyDisplayedStimulus.getShape().setTranslateY(DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg()+arg0*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg()), fixY, distToScreen)-currentlyDisplayedStimulus.getStartYPix());
+					currentlyDisplayedStimulus.getShape().setTranslateX(DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg()+arg0*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg()))-currentlyDisplayedStimulus.getStartXPix());
+					currentlyDisplayedStimulus.getShape().setTranslateY(DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg()+arg0*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg()))-currentlyDisplayedStimulus.getStartYPix());
 					response = arg0;
             	}
             };
@@ -382,8 +383,8 @@ public class KineticPerimetry extends Stage {
             	PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
             	double xDeg=currentlyDisplayedStimulus.getStartXDeg()+response*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg());
             	double yDeg=currentlyDisplayedStimulus.getStartYDeg()+response*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg());
-            	double xPix=DegPixConverter.convertDegToPixX(xDeg, fixX, distToScreen);
-            	double yPix=DegPixConverter.convertDegToPixY(yDeg, fixY, distToScreen);
+            	double xPix=DegPixConverter.convertDegToPixX(xDeg);
+            	double yPix=DegPixConverter.convertDegToPixY(yDeg);
 				pw.println(System.currentTimeMillis()+", Stimulus Disappear: ("+xPix+", "+yPix+"), ("+xDeg+", "+yDeg+")");
 				pw.close();
 			} catch (FileNotFoundException e) {
@@ -396,8 +397,8 @@ public class KineticPerimetry extends Stage {
             	PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
             	double xDeg=currentlyDisplayedStimulus.getStartXDeg()+response*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg());
             	double yDeg=currentlyDisplayedStimulus.getStartYDeg()+response*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg());
-            	double xPix=DegPixConverter.convertDegToPixX(xDeg, fixX, distToScreen);
-            	double yPix=DegPixConverter.convertDegToPixY(yDeg, fixY, distToScreen);
+            	double xPix=DegPixConverter.convertDegToPixX(xDeg);
+            	double yPix=DegPixConverter.convertDegToPixY(yDeg);
 				pw.println(System.currentTimeMillis()+", Stimulus Appear: ("+xPix+", "+yPix+"), ("+xDeg+", "+yDeg+")");
 				pw.close();
 			} catch (FileNotFoundException e) {

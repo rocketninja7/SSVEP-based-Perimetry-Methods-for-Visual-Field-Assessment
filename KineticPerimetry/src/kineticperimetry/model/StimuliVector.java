@@ -24,15 +24,15 @@ public class StimuliVector {
 	Shape shape;
 	double[] answers;
 	public StimuliVector() {}
-	public StimuliVector(double startXDeg, double startYDeg, double endXDeg, double endYDeg, double radX, double radY, double fixX, double fixY, double speed, int brightness, double distToScreen) {
+	public StimuliVector(double startXDeg, double startYDeg, double endXDeg, double endYDeg, double radX, double radY, double speed, int brightness) {
 		this.startXDeg = startXDeg;
 		this.startYDeg = startYDeg;
 		this.endXDeg = endXDeg;
 		this.endYDeg = endYDeg;
-		startXPix = DegPixConverter.convertDegToPixX(startXDeg, fixX, distToScreen);
-		startYPix = DegPixConverter.convertDegToPixY(startYDeg, fixY, distToScreen);
-		endXPix = DegPixConverter.convertDegToPixX(endXDeg, fixX, distToScreen);
-		endYPix = DegPixConverter.convertDegToPixY(endYDeg, fixY, distToScreen);
+		startXPix = DegPixConverter.convertDegToPixX(startXDeg);
+		startYPix = DegPixConverter.convertDegToPixY(startYDeg);
+		endXPix = DegPixConverter.convertDegToPixX(endXDeg);
+		endYPix = DegPixConverter.convertDegToPixY(endYDeg);
 		radiusX = radX;
 		radiusY = radY;
 		this.brightness = brightness;
@@ -43,15 +43,15 @@ public class StimuliVector {
 			answers[i] = 0;
 		}
 	}
-	public StimuliVector(double xDeg, double yDeg, double radXDeg, double radYDeg, double fixX, double fixY, int time, int brightness, double distToScreen) {
+	public StimuliVector(double xDeg, double yDeg, double radXDeg, double radYDeg, int time, int brightness) {
 		startXDeg = endXDeg = xDeg;
 		startYDeg = endYDeg = yDeg;
-		startXPix = DegPixConverter.convertDegToPixX(startXDeg, fixX, distToScreen);
-		startYPix = DegPixConverter.convertDegToPixY(startYDeg, fixY, distToScreen);
-		endXPix = DegPixConverter.convertDegToPixX(endXDeg, fixX, distToScreen);
-		endYPix = DegPixConverter.convertDegToPixY(endYDeg, fixY, distToScreen);
-		radiusX = (DegPixConverter.convertDegToPixX(xDeg+radXDeg, fixX, distToScreen) - DegPixConverter.convertDegToPixX(xDeg-radXDeg, fixX, distToScreen))/2;
-		radiusY = (DegPixConverter.convertDegToPixY(yDeg+radYDeg, fixY, distToScreen) - DegPixConverter.convertDegToPixY(yDeg-radYDeg, fixY, distToScreen))/2;
+		startXPix = DegPixConverter.convertDegToPixX(startXDeg);
+		startYPix = DegPixConverter.convertDegToPixY(startYDeg);
+		endXPix = DegPixConverter.convertDegToPixX(endXDeg);
+		endYPix = DegPixConverter.convertDegToPixY(endYDeg);
+		radiusX = (DegPixConverter.convertDegToPixX(xDeg+radXDeg) - DegPixConverter.convertDegToPixX(xDeg-radXDeg))/2;
+		radiusY = (DegPixConverter.convertDegToPixY(yDeg+radYDeg) - DegPixConverter.convertDegToPixY(yDeg-radYDeg))/2;
 		this.brightness = brightness;
 		displayTime = time;
 		shape = new Ellipse(startXPix, startYPix, radiusX, radiusY);
