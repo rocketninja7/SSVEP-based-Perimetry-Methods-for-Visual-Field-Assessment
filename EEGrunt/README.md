@@ -1,5 +1,7 @@
 # EEGrunt: A Collection Python EEG (+ECG) Analysis Utilities
 
+Note by Roy: can convert the eeg txt file to one with timesteamp using convert_txt_to_csv.py, then draw the signal (power/time), spectrograms(frequency/time), amplitude over time, and power spectrum(psd per Hz/frequency) using analyse_data.py
+
 ### [READ THE ANNOUNCEMENT POST &raquo;][1]
 
 Working with EEG (electroencephalography) data is hard, and this little library aims to make it easier. EEGrunt consists of a collection of functions for reading EEG data from CSV files, converting and filtering it in various ways, and finally generating pretty and informative visualizations.
