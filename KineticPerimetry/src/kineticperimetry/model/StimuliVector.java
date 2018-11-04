@@ -1,9 +1,5 @@
 package kineticperimetry.model;
 
-import java.util.ArrayList;
-
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Shape;
 
@@ -38,8 +34,8 @@ public class StimuliVector {
 		this.brightness = brightness;
 		displayTime = (int)(Math.sqrt((endYDeg-startYDeg)*(endYDeg-startYDeg)+(endXDeg-startXDeg)*(endXDeg-startXDeg))/speed);
 		shape = new Ellipse(startXPix, startYPix, radiusX, radiusY);
-		answers = new double[2];
-		for(int i = 0; i < 2; i++) {
+		answers = new double[1];
+		for(int i = 0; i < 1; i++) {
 			answers[i] = 0;
 		}
 	}
@@ -55,8 +51,8 @@ public class StimuliVector {
 		this.brightness = brightness;
 		displayTime = time;
 		shape = new Ellipse(startXPix, startYPix, radiusX, radiusY);
-		answers = new double[2];
-		for(int i = 0; i < 2; i++) {
+		answers = new double[1];
+		for(int i = 0; i < 1; i++) {
 			answers[i] = 0;
 		}
 	}

@@ -2,8 +2,15 @@ package kineticperimetry.view;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Random;
 
 import javafx.animation.Animation;
@@ -28,9 +35,12 @@ import kineticperimetry.model.StimuliVector;
 public class StaticPerimetry extends Stage {
 	
 	final static double limit=40;
-	final static double separationAngle=10;
+	final static double separationAngle=8;
 	final static double tempFreq=0.01;
 	final static int promptDuration=1000;
+	
+	Path file;
+	long filePosition;
 	
 	int[] brightnessVector;
 	
@@ -64,6 +74,10 @@ public class StaticPerimetry extends Stage {
 	public StaticPerimetry() {
 		initStyle(StageStyle.UNDECORATED);
 		
+		String path=Calendar.getInstance().get(Calendar.DATE)+Calendar.getInstance().get(Calendar.MONTH)+Calendar.getInstance().get(Calendar.YEAR)+"StaticEvents.txt";
+		file=Paths.get(path);
+		filePosition=0;
+		
 		youCanRespondToStimulus=false;
 		randomGenerator=new Random();
 		stimuliVectors=new ArrayList<>();
@@ -83,7 +97,7 @@ public class StaticPerimetry extends Stage {
 			KeyCode option = ke.getCode();
 			
 			try {
-				PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
+				PrintWriter pw=new PrintWriter(new FileOutputStream(path, true));
 				pw.println(System.currentTimeMillis()+", "+option);
 				pw.close();
 			} catch (FileNotFoundException e) {
@@ -139,10 +153,12 @@ public class StaticPerimetry extends Stage {
         timelineBoot.play();
         
         try {
-        	PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
-			pw.println(System.currentTimeMillis()+", Procedure Started");
-			pw.close();
-		} catch (FileNotFoundException e) {
+        	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+        	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Started\n").getBytes()), filePosition);
+        	filePosition+=(System.currentTimeMillis()+", Procedure Started\n").getBytes().length;
+        } catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
     }
@@ -179,7 +195,7 @@ public class StaticPerimetry extends Stage {
             displayPane.getChildren().add(prompt);
             
             try {
-            	PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
+            	PrintWriter pw=new PrintWriter(new FileOutputStream(path, true));
             	double xPix=DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg()+response*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg()), fixX, distToScreen);
             	double yPix=DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg()+response*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg()), fixY, distToScreen);
 				pw.println(System.currentTimeMillis()+", Prompt: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color);
@@ -196,7 +212,7 @@ public class StaticPerimetry extends Stage {
         KeyFrame keyFrameRemovePrompt = new KeyFrame(Duration.millis(cumulativeTimeInterval), event -> {
         	if (displayPane.getChildren().size() > 1) {
             	try {
-            		PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
+            		PrintWriter pw=new PrintWriter(new FileOutputStream(path, true));
             		pw.println(System.currentTimeMillis()+", Remove Prompt");
     				pw.close();
 				} catch (FileNotFoundException e) {
@@ -235,12 +251,14 @@ public class StaticPerimetry extends Stage {
             displayPane.getChildren().add(currentlyDisplayedStimulus.getShape());
             
             try {
-            	PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
             	double xPix=DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg()+response*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg()));
             	double yPix=DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg()+response*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg()));
-				pw.println(System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color);
-				pw.close();
-			} catch (FileNotFoundException e) {
+            	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color+"\n").getBytes()), filePosition);
+            	filePosition+=(System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color+"\n").getBytes().length;
+            } catch (FileNotFoundException e) {
+    			e.printStackTrace();
+    		} catch (IOException e) {
 				e.printStackTrace();
 			}
             
@@ -269,10 +287,12 @@ public class StaticPerimetry extends Stage {
         KeyFrame keyFrameRemoveStimulus = new KeyFrame(Duration.millis(cumulativeTimeInterval), event -> {
             if (displayPane.getChildren().size() > 1) {
             	try {
-            		PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
-            		pw.println(System.currentTimeMillis()+", Remove Stimulus");
-    				pw.close();
-				} catch (FileNotFoundException e) {
+                	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+                	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Remove Stimulus\n").getBytes()), filePosition);
+                	filePosition+=(System.currentTimeMillis()+", Remove Stimulus\n").getBytes().length;
+                } catch (FileNotFoundException e) {
+        			e.printStackTrace();
+        		} catch (IOException e) {
 					e.printStackTrace();
 				}
             	
@@ -370,12 +390,14 @@ public class StaticPerimetry extends Stage {
             	else {*/
             		procedureIsFinished=true;
             		try {
-                    	PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
-        				pw.println(System.currentTimeMillis()+", Procedure Complete");
-        				pw.close();
-        			} catch (FileNotFoundException e) {
-        				e.printStackTrace();
-        			}
+                    	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+                    	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Complete\n").getBytes()), filePosition);
+                    	filePosition+=(System.currentTimeMillis()+", Procedure Complete\n").getBytes().length;
+                    } catch (FileNotFoundException e) {
+            			e.printStackTrace();
+            		} catch (IOException e) {
+						e.printStackTrace();
+					}
             		StaticResults staticResults = new StaticResults(limit, separationAngle, stimuliVectors);
             		staticResults.show();
             	/*}
@@ -432,20 +454,24 @@ public class StaticPerimetry extends Stage {
         Timeline timelineBlink = new Timeline(new KeyFrame(Duration.millis(1/tempFreq), evt -> {
         	currentlyDisplayedStimulus.getShape().setVisible(false);
         	try {
-            	PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
-				pw.println(System.currentTimeMillis()+", Stimulus Disappear");
-				pw.close();
-			} catch (FileNotFoundException e) {
+            	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Stimulus Disappear\n").getBytes()), filePosition);
+            	filePosition+=(System.currentTimeMillis()+", Stimulus Disappear\n").getBytes().length;
+            } catch (FileNotFoundException e) {
+    			e.printStackTrace();
+    		} catch (IOException e) {
 				e.printStackTrace();
 			}
         }),
         new KeyFrame(Duration.millis(2/tempFreq), evt -> {
             currentlyDisplayedStimulus.getShape().setVisible(true);
             try {
-            	PrintWriter pw=new PrintWriter(new FileOutputStream("Events.txt", true));
-				pw.println(System.currentTimeMillis()+", Stimulus Appear");
-				pw.close();
-			} catch (FileNotFoundException e) {
+            	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Stimulus Appear\n").getBytes()), filePosition);
+            	filePosition+=(System.currentTimeMillis()+", Stimulus Appear\n").getBytes().length;
+            } catch (FileNotFoundException e) {
+    			e.printStackTrace();
+    		} catch (IOException e) {
 				e.printStackTrace();
 			}
         }));
