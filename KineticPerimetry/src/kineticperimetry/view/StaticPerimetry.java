@@ -1,16 +1,16 @@
 package kineticperimetry.view;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Random;
 
 import javafx.animation.Animation;
@@ -74,7 +74,9 @@ public class StaticPerimetry extends Stage {
 	public StaticPerimetry() {
 		initStyle(StageStyle.UNDECORATED);
 		
-		String path=Calendar.getInstance().get(Calendar.DATE)+Calendar.getInstance().get(Calendar.MONTH)+Calendar.getInstance().get(Calendar.YEAR)+"StaticEvents.txt";
+		Calendar now=GregorianCalendar.getInstance();
+		SimpleDateFormat format=new SimpleDateFormat("yyyyMMddHHmm");
+		String path=format.format(now.getTime())+"StaticEvents.txt";
 		file=Paths.get(path);
 		filePosition=0;
 		
@@ -97,10 +99,12 @@ public class StaticPerimetry extends Stage {
 			KeyCode option = ke.getCode();
 			
 			try {
-				PrintWriter pw=new PrintWriter(new FileOutputStream(path, true));
-				pw.println(System.currentTimeMillis()+", "+option);
-				pw.close();
-			} catch (FileNotFoundException e) {
+	        	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+	        	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", "+option+";").getBytes()), filePosition);
+	        	filePosition+=(System.currentTimeMillis()+", "+option+";").getBytes().length;
+	        } catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
@@ -154,8 +158,8 @@ public class StaticPerimetry extends Stage {
         
         try {
         	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-        	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Started\n").getBytes()), filePosition);
-        	filePosition+=(System.currentTimeMillis()+", Procedure Started\n").getBytes().length;
+        	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Started;").getBytes()), filePosition);
+        	filePosition+=(System.currentTimeMillis()+", Procedure Started;").getBytes().length;
         } catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -254,8 +258,8 @@ public class StaticPerimetry extends Stage {
             	double xPix=DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg()+response*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg()));
             	double yPix=DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg()+response*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg()));
             	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color+"\n").getBytes()), filePosition);
-            	filePosition+=(System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color+"\n").getBytes().length;
+            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color+";").getBytes()), filePosition);
+            	filePosition+=(System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color+";").getBytes().length;
             } catch (FileNotFoundException e) {
     			e.printStackTrace();
     		} catch (IOException e) {
@@ -288,8 +292,8 @@ public class StaticPerimetry extends Stage {
             if (displayPane.getChildren().size() > 1) {
             	try {
                 	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-                	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Remove Stimulus\n").getBytes()), filePosition);
-                	filePosition+=(System.currentTimeMillis()+", Remove Stimulus\n").getBytes().length;
+                	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Remove Stimulus;").getBytes()), filePosition);
+                	filePosition+=(System.currentTimeMillis()+", Remove Stimulus;").getBytes().length;
                 } catch (FileNotFoundException e) {
         			e.printStackTrace();
         		} catch (IOException e) {
@@ -391,8 +395,8 @@ public class StaticPerimetry extends Stage {
             		procedureIsFinished=true;
             		try {
                     	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-                    	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Complete\n").getBytes()), filePosition);
-                    	filePosition+=(System.currentTimeMillis()+", Procedure Complete\n").getBytes().length;
+                    	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Complete;").getBytes()), filePosition);
+                    	filePosition+=(System.currentTimeMillis()+", Procedure Complete;").getBytes().length;
                     } catch (FileNotFoundException e) {
             			e.printStackTrace();
             		} catch (IOException e) {
@@ -455,8 +459,8 @@ public class StaticPerimetry extends Stage {
         	currentlyDisplayedStimulus.getShape().setVisible(false);
         	try {
             	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Stimulus Disappear\n").getBytes()), filePosition);
-            	filePosition+=(System.currentTimeMillis()+", Stimulus Disappear\n").getBytes().length;
+            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Stimulus Disappear;").getBytes()), filePosition);
+            	filePosition+=(System.currentTimeMillis()+", Stimulus Disappear;").getBytes().length;
             } catch (FileNotFoundException e) {
     			e.printStackTrace();
     		} catch (IOException e) {
@@ -467,8 +471,8 @@ public class StaticPerimetry extends Stage {
             currentlyDisplayedStimulus.getShape().setVisible(true);
             try {
             	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Stimulus Appear\n").getBytes()), filePosition);
-            	filePosition+=(System.currentTimeMillis()+", Stimulus Appear\n").getBytes().length;
+            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Stimulus Appear;").getBytes()), filePosition);
+            	filePosition+=(System.currentTimeMillis()+", Stimulus Appear;").getBytes().length;
             } catch (FileNotFoundException e) {
     			e.printStackTrace();
     		} catch (IOException e) {

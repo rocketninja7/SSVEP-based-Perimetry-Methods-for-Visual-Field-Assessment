@@ -1,16 +1,16 @@
 package kineticperimetry.view;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Random;
 
 import javafx.animation.Animation;
@@ -75,7 +75,9 @@ public class KineticPerimetry extends Stage {
 	public KineticPerimetry() {
 		initStyle(StageStyle.UNDECORATED);
 		
-		String path=Calendar.getInstance().get(Calendar.DATE)+Calendar.getInstance().get(Calendar.MONTH)+Calendar.getInstance().get(Calendar.YEAR)+"KineticEvents.txt";
+		Calendar now=GregorianCalendar.getInstance();
+		SimpleDateFormat format=new SimpleDateFormat("yyyyMMddHHmm");
+		String path=format.format(now.getTime())+"KineticEvents.txt";
 		file=Paths.get(path);
 		filePosition=0;
 		
@@ -98,10 +100,12 @@ public class KineticPerimetry extends Stage {
 			KeyCode option = ke.getCode();
 			
 			try {
-				PrintWriter pw=new PrintWriter(new FileOutputStream(path, true));
-				pw.println(System.currentTimeMillis()+", "+option);
-				pw.close();
-			} catch (FileNotFoundException e) {
+	        	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+	        	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", "+option+";").getBytes()), filePosition);
+	        	filePosition+=(System.currentTimeMillis()+", "+option+";").getBytes().length;
+	        } catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
@@ -153,8 +157,8 @@ public class KineticPerimetry extends Stage {
         
         try {
         	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-        	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Started\n").getBytes()), filePosition);
-        	filePosition+=(System.currentTimeMillis()+", Procedure Started\n").getBytes().length;
+        	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Started;").getBytes()), filePosition);
+        	filePosition+=(System.currentTimeMillis()+", Procedure Started;").getBytes().length;
         } catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -202,8 +206,8 @@ public class KineticPerimetry extends Stage {
             	double xPix=DegPixConverter.convertDegToPixX(currentlyDisplayedStimulus.getStartXDeg()+response*(currentlyDisplayedStimulus.getEndXDeg()-currentlyDisplayedStimulus.getStartXDeg()));
             	double yPix=DegPixConverter.convertDegToPixY(currentlyDisplayedStimulus.getStartYDeg()+response*(currentlyDisplayedStimulus.getEndYDeg()-currentlyDisplayedStimulus.getStartYDeg()));
             	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color+"\n").getBytes()), filePosition);
-            	filePosition+=(System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color+"\n").getBytes().length;
+            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color+";").getBytes()), filePosition);
+            	filePosition+=(System.currentTimeMillis()+", Add: ("+xPix+", "+yPix+"), ("+currentlyDisplayedStimulus.getStartXDeg()+", "+currentlyDisplayedStimulus.getStartYDeg()+"), "+color+";").getBytes().length;
             } catch (FileNotFoundException e) {
     			e.printStackTrace();
     		} catch (IOException e) {
@@ -236,8 +240,8 @@ public class KineticPerimetry extends Stage {
             if (displayPane.getChildren().size() > 1) {
             	try {
                 	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-                	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Started\n").getBytes()), filePosition);
-                	filePosition+=(System.currentTimeMillis()+", Remove Stimulus\n").getBytes().length;
+                	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Started;").getBytes()), filePosition);
+                	filePosition+=(System.currentTimeMillis()+", Remove Stimulus;").getBytes().length;
                 } catch (FileNotFoundException e) {
         			e.printStackTrace();
         		} catch (IOException e) {
@@ -337,8 +341,8 @@ public class KineticPerimetry extends Stage {
             		procedureIsFinished=true;
             		try {
                     	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-                    	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Started\n").getBytes()), filePosition);
-                    	filePosition+=(System.currentTimeMillis()+", Procedure Complete\n").getBytes().length;
+                    	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Started;").getBytes()), filePosition);
+                    	filePosition+=(System.currentTimeMillis()+", Procedure Complete;").getBytes().length;
                     } catch (FileNotFoundException e) {
             			e.printStackTrace();
             		} catch (IOException e) {
@@ -405,8 +409,8 @@ public class KineticPerimetry extends Stage {
             	double xPix=DegPixConverter.convertDegToPixX(xDeg);
             	double yPix=DegPixConverter.convertDegToPixY(yDeg);
             	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Stimulus Disappear: ("+xPix+", "+yPix+"), ("+xDeg+", "+yDeg+")\n").getBytes()), filePosition);
-            	filePosition+=(System.currentTimeMillis()+", Stimulus Disappear: ("+xPix+", "+yPix+"), ("+xDeg+", "+yDeg+")\n").getBytes().length;
+            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Stimulus Disappear: ("+xPix+", "+yPix+"), ("+xDeg+", "+yDeg+");").getBytes()), filePosition);
+            	filePosition+=(System.currentTimeMillis()+", Stimulus Disappear: ("+xPix+", "+yPix+"), ("+xDeg+", "+yDeg+");").getBytes().length;
             } catch (FileNotFoundException e) {
     			e.printStackTrace();
     		} catch (IOException e) {
@@ -421,8 +425,8 @@ public class KineticPerimetry extends Stage {
             	double xPix=DegPixConverter.convertDegToPixX(xDeg);
             	double yPix=DegPixConverter.convertDegToPixY(yDeg);
             	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Stimulus Appear: ("+xPix+", "+yPix+"), ("+xDeg+", "+yDeg+")\n").getBytes()), filePosition);
-            	filePosition+=(System.currentTimeMillis()+", Stimulus Appear: ("+xPix+", "+yPix+"), ("+xDeg+", "+yDeg+")\n").getBytes().length;
+            	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Stimulus Appear: ("+xPix+", "+yPix+"), ("+xDeg+", "+yDeg+");").getBytes()), filePosition);
+            	filePosition+=(System.currentTimeMillis()+", Stimulus Appear: ("+xPix+", "+yPix+"), ("+xDeg+", "+yDeg+");").getBytes().length;
             } catch (FileNotFoundException e) {
     			e.printStackTrace();
     		} catch (IOException e) {
