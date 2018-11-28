@@ -348,6 +348,8 @@ public class KineticPerimetry extends Stage {
             		} catch (IOException e) {
             			e.printStackTrace();
             		}
+            		KineticResults kineticResults=new KineticResults(stimuliVectors);
+            		kineticResults.show();
             	/*}
             	step++;*/
             }

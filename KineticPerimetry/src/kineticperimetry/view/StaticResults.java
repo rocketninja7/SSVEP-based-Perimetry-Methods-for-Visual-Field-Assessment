@@ -42,7 +42,7 @@ public class StaticResults extends Stage {
 				color = Color.hsb(
 		                0,
 		                0,
-		                0.5
+		                0.25
 		            );
 				}
 			else {

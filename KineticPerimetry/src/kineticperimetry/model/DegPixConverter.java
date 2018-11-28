@@ -9,7 +9,7 @@ public final class DegPixConverter {
 	public final static double screenYInch=9/(Math.sqrt(9*9+16*16))*screenSizeInch;
 	public final static double fixX=screenResX/2;
 	public final static double fixY=screenResY/2;
-	public final static double distToScreen=screenYInch/2*2.54/Math.tan(Math.toRadians(40));//In cm
+	public final static double distToScreen=screenYInch/2*2.54/Math.tan(Math.toRadians(40));//In cm (16.1)
 	
 	public static double convertPixToDegX(double pix) {
     	return Math.atan((pix-fixX)/(screenResX/screenXInch)*2.54/distToScreen);
