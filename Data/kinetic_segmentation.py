@@ -29,7 +29,7 @@ while eventcounter<len(events)-1:
             break
         xDegree=float(events[eventcounter].split(",")[3][2:])
         yDegree=float(events[eventcounter].split(",")[4][1:-2])
-        if fov>=max(abs(xDegree),abs(yDegree)):
+        if fov*fov>=xDegree*xDegree+yDegree*yDegree:
             eventend=events[eventcounter].split(",")[0]
             break
         eventcounter+=1
