@@ -240,7 +240,7 @@ public class KineticPerimetry extends Stage {
             if (displayPane.getChildren().size() > 1) {
             	try {
                 	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-                	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Started;").getBytes()), filePosition);
+                	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Remove Stimulus;").getBytes()), filePosition);
                 	filePosition+=(System.currentTimeMillis()+", Remove Stimulus;").getBytes().length;
                 } catch (FileNotFoundException e) {
         			e.printStackTrace();
@@ -341,7 +341,7 @@ public class KineticPerimetry extends Stage {
             		procedureIsFinished=true;
             		try {
                     	AsynchronousFileChannel asyncFile = AsynchronousFileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-                    	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Started;").getBytes()), filePosition);
+                    	asyncFile.write(ByteBuffer.wrap((System.currentTimeMillis()+", Procedure Complete;").getBytes()), filePosition);
                     	filePosition+=(System.currentTimeMillis()+", Procedure Complete;").getBytes().length;
                     } catch (FileNotFoundException e) {
             			e.printStackTrace();
