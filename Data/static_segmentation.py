@@ -25,7 +25,7 @@ while eventcounter<len(events)-1:
         continue
     xDegree=float(events[eventcounter].split(",")[3][2:])
     yDegree=float(events[eventcounter].split(",")[4][1:-2])
-    inFOV=fov>=max(abs(xDegree),abs(yDegree))
+    inFOV=fov*fov>=xDegree*xDegree+yDegree*yDegree
     eventstart=events[eventcounter].split(",")[0]
     eventend=0
     pressed=False
@@ -36,7 +36,6 @@ while eventcounter<len(events)-1:
             eventend=events[eventcounter].split(",")[0]
             break
         eventcounter+=1
-    eegstart=eegs[eegcounter].split(",")[9]
     label="000"
     if inFOV:
         if pressed:
@@ -53,6 +52,7 @@ while eventcounter<len(events)-1:
             label="%03d" % outmiss
             outmiss+=1
     #outputFile.write("Add: "+eventstart+", Removed: "+eventend+"\n")
+    eegstart=eegs[eegcounter].split(",")[9]
     while eegcounter<len(eegs)-1:
         if int(eegstart)>=int(eventstart):
             break
