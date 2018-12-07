@@ -10,6 +10,6 @@ Not within FOV, pressed 160-239
 Not within FOV, missed 240-319
 
 Kinetic
-Within FOV/ Seen by user(pressed) 320-349
-Not in FOV 350-379
+Not in FOV 320-349
+Within FOV/ Seen by user(pressed) 350-379
 
