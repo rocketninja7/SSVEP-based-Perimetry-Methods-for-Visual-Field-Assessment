@@ -1,5 +1,4 @@
-
-date="28-11"
+date="16-12"
 fov=30
 file="k_30_l_mathan.txt"
 
@@ -27,6 +26,8 @@ while eventcounter<len(events)-1:
     while eventcounter<len(events):
         if "SPACE" in events[eventcounter]:
             outeventend=events[eventcounter].split(",")[0]
+            eventcounter+=1
+            continue
         xDegree=float(events[eventcounter].split(",")[3][2:])
         yDegree=float(events[eventcounter].split(",")[4][1:-2])
         if fov*fov>=xDegree*xDegree+yDegree*yDegree:
