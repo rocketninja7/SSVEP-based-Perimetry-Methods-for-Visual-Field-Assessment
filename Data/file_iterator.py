@@ -2,13 +2,14 @@ import os
 
 from static_segmentation import static_segment
 from kinetic_segmentation import kinetic_segment
-from reaction import react
+from static_reaction import static_react
+from static_accelerometer import static_accelerometer
+from kinetic_accelerometer import kinetic_accelerometer
 #all methods have three parameters(date,fov,filename)
 
-date="28-11"
-for f in os.listdir(date+"/Ganglion"):
-    if f.endswith(".txt") and f.startswith("k"):
-        kinetic_segment(date, int(f[2:4]), f)
-    if f.endswith(".txt") and f.startswith("s"):
-        static_segment(date, int(f[2:4]), f)
-    react(date, int(f[2:4]), f);
+date="22-11"
+for file in os.listdir(date+"/Ganglion"):
+    if file.endswith(".txt") and file.startswith("s"): #file.startswith("k")
+        print(file)
+        static_accelerometer(date, int(file[2:4]),file)
+
