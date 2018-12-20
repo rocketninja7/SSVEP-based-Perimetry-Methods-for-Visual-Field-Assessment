@@ -1,14 +1,14 @@
 
 date="22-11"
 fov=30
-file="k_30_r_andrew.txt"
+f="k_30_r_andrew.txt"
 
-def kinetic_segment(date,fov,file):
+def kinetic_segment(date,fov,f):
     out=320
     #in is out+30
-    Event=date+"/Perimetry/"+file
-    EEG=date+"/Ganglion/"+file
-    output=date+"/Segmented/"+file
+    Event=date+"/Perimetry/"+f
+    EEG=date+"/Ganglion/"+f
+    output=date+"/Segmented/"+f
     eventFile=open(Event,"r")
     eegFile=open(EEG,"r")
     outputFile=open(output,"w")
@@ -60,6 +60,7 @@ def kinetic_segment(date,fov,file):
             eegcounter+=1
             eegend=eegs[eegcounter].split(",")[9]
         out+=1
+        outputFile.close()
 
 if __name__ == "__main__":
-    kinetic_segment(date,fov,file)
+    kinetic_segment(date,fov,f)

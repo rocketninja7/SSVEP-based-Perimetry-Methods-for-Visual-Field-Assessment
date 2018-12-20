@@ -66,6 +66,7 @@ def static_segment(date,fov,file):
             outputFile.write(label+", "+eegs[eegcounter].split(",")[1]+", "+eegs[eegcounter].split(",")[2]+", "+eegs[eegcounter].split(",")[3]+"\n")
             eegcounter+=1
             eegend=eegs[eegcounter].split(",")[9]
+    outputFile.close()
 
 if __name__ == "__main__":
     static_segment(date,fov,file)
