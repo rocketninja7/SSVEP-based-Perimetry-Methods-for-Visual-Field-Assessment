@@ -1,12 +1,12 @@
 import numpy as np
 
-date="28-11"
-fov=40
-file="s_40_r_mathan.txt"
+defdate="28-11"
+deffov=40
+deff="s_40_r_mathan.txt"
 
-def static_react(date,fov,file):
-    Event=date+"/Perimetry/"+file
-    output=date+"/Reaction/"+file
+def static_react(date,fov,f):
+    Event=date+"/Perimetry/"+f
+    output=date+"/Reaction/"+f
     
     miss=0
     pressOutFOV=0
@@ -47,4 +47,4 @@ def static_react(date,fov,file):
         outputFile.write(str(reaction)+"\n")
     
 if __name__ == "__main__":
-    static_react(date,fov,file)
+    static_react(defdate,deffov,deff)

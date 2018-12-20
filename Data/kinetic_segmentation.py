@@ -1,7 +1,7 @@
 
-date="22-11"
-fov=30
-f="k_30_r_andrew.txt"
+defdate="22-11"
+deffov=30
+deff="k_30_r_andrew.txt"
 
 def kinetic_segment(date,fov,f):
     out=320
@@ -22,10 +22,12 @@ def kinetic_segment(date,fov,f):
             continue
         eventstart=events[eventcounter].split(",")[0]
         eventend=0
+        outeventend=0
         while eventcounter<len(events):
             if "SPACE" in events[eventcounter]:
-                eventend=events[eventcounter].split(",")[0]
-                break
+                outeventend=events[eventcounter].split(",")[0]
+                eventcounter+=1
+                continue
             xDegree=float(events[eventcounter].split(",")[3][2:])
             yDegree=float(events[eventcounter].split(",")[4][1:-2])
             if fov*fov>=xDegree*xDegree+yDegree*yDegree:
@@ -34,11 +36,16 @@ def kinetic_segment(date,fov,f):
             eventcounter+=1
         #now eventstart is timestamp when dot appears at corner, and eventend when the user should start seeing the dot
         eventremove=0
+        ineventend=0
         while eventcounter<len(events):
+            if "SPACE" in events[eventcounter] and ineventend==0:
+                ineventend=events[eventcounter].split(",")[0]
             if "Remove" in events[eventcounter]:
                 eventremove=events[eventcounter].split(",")[0]
                 break
             eventcounter+=1
+        if ineventend==0 and outeventend>0:
+            eventend=outeventend
         #now eventremove is timestamp when dot is removed
         eegstart=eegs[eegcounter].split(",")[9]
         while eegcounter<len(eegs)-1:
@@ -60,7 +67,7 @@ def kinetic_segment(date,fov,f):
             eegcounter+=1
             eegend=eegs[eegcounter].split(",")[9]
         out+=1
-        outputFile.close()
+    outputFile.close()
 
 if __name__ == "__main__":
-    kinetic_segment(date,fov,f)
+    kinetic_segment(defdate,deffov,deff)

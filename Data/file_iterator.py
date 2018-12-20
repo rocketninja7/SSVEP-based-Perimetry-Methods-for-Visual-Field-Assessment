@@ -11,4 +11,4 @@ for f in os.listdir(date+"/Ganglion"):
         kinetic_segment(date, int(f[2:4]), f)
     if f.endswith(".txt") and f.startswith("s"):
         static_segment(date, int(f[2:4]), f)
-
+        static_react(date, int(f[2:4]), f);

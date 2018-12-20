@@ -1,12 +1,12 @@
 
-date="22-11"
-fov=20
-file="s_20_l_andrew.txt"
+defdate="22-11"
+deffov=20
+deff="s_20_l_andrew.txt"
 
-def static_segment(date,fov,file):
-    Event=date+"/Perimetry/"+file
-    EEG=date+"/Ganglion/"+file
-    output=date+"/Segmented/"+file
+def static_segment(date,fov,f):
+    Event=date+"/Perimetry/"+f
+    EEG=date+"/Ganglion/"+f
+    output=date+"/Segmented/"+f
     
     inmiss=0
     inpress=80
@@ -69,4 +69,4 @@ def static_segment(date,fov,file):
     outputFile.close()
 
 if __name__ == "__main__":
-    static_segment(date,fov,file)
+    static_segment(defdate,deffov,deff)
