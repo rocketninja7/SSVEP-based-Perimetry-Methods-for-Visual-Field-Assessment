@@ -33,13 +33,12 @@ def react(date,fov,f):
             if "Remove" in events[eventcounter]:
                 break
             eventcounter+=1
-        if sork == "s":
-            if not pressed==0:
-                reactions.append(pressed-eventstart)
-                if not inFOV:
-                    pressOutFOV+=1
-            if inFOV and pressed==0:
-                miss+=1
+        if not pressed==0:
+            reactions.append(pressed-eventstart)
+            if not inFOV:
+                pressOutFOV+=1    
+        if inFOV and pressed==0:
+            miss+=1
     if sork == "s":
         outputFile.write("Total points= 80\n")
         outputFile.write("Points pressed= "+str(len(reactions))+", of which "+str(pressOutFOV)+" are out of FOV\n")

@@ -72,9 +72,9 @@ def static_accelerometer(date,fov,file):
             lastX=a*float(eegs[eegcounter].split(",")[5])+(1-a)*lastX
             lastY=a*float(eegs[eegcounter].split(",")[6])+(1-a)*lastY
             lastZ=a*float(eegs[eegcounter].split(",")[7])+(1-a)*lastZ
-            pitch=math.atan(lastY/math.sqrt(pow(lastX, 2)+pow(lastZ, 2)))
-            yaw=0
-            outputFile.write(label+", "+"%0.5f" %(pitch)+", "+"%0.5f" %(yaw)+"\n")
+            pitch=math.atan(lastY/math.sqrt(pow(lastX, 2)+pow(lastZ, 2)))*180/math.pi
+            roll=0
+            outputFile.write(label+", "+"%0.5f" %(pitch)+", "+"%0.5f" %(roll)+"\n")
             eegcounter+=20 #acceleromter is 10Hz, so changes once every 20 lines, cos eeg is 200Hz
             eegend=eegs[eegcounter].split(",")[9]
 

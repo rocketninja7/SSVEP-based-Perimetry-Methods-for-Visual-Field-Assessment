@@ -28,6 +28,9 @@ def kinetic_segment(date,fov,f):
                 outeventend=events[eventcounter].split(",")[0]
                 eventcounter+=1
                 continue
+            if "Stimulus" not in events[eventcounter]:
+                eventcounter+=1
+                continue
             xDegree=float(events[eventcounter].split(",")[3][2:])
             yDegree=float(events[eventcounter].split(",")[4][1:-2])
             if fov*fov>=xDegree*xDegree+yDegree*yDegree:
