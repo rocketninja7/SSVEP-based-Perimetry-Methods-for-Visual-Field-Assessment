@@ -23,7 +23,7 @@ fOrder = 4;
 for file=1 :length(Data.static)
     ccc = [];
     for iStim=1 : length(Data.static(file).stimId)
-        eegRaw = Data.static(file).eeg{iStim};
+        eegRaw = Data.static(file).eeg{iStim}(:,1:2);
         %bandpass filtering of raw EEG
         eegBp = filtfilt(filtB, filtA, eegRaw);
         %normalize eeg data
@@ -44,7 +44,7 @@ for file=1 :length(Data.static)
 end
 for file=1 :length(Data.kinetic)
     for iStim=1 : length(Data.kinetic(file).stimId)
-        eegRaw = Data.kinetic(file).eeg{iStim};
+        eegRaw = Data.kinetic(file).eeg{iStim}(:,1:2);
         %bandpass filtering of raw EEG
         eegBp = filtfilt(filtB, filtA, eegRaw);
         %normalize eeg data
