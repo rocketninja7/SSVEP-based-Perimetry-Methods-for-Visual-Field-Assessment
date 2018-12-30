@@ -32,7 +32,9 @@ def static_events(date,fov,file):
                 break
             eventcounter+=1
         if inFOV or pressed:
+            outputFile.write(str(int(addTime)-1)+",0\n")
             outputFile.write(addTime+",1\n")
+            outputFile.write(str(int(removeTime)-1)+",1\n")
             outputFile.write(removeTime+",0\n")
 
 if __name__ == "__main__":

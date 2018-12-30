@@ -35,7 +35,9 @@ def kinetic_events(date,fov,file):
                 break
             eventcounter+=1
         #now eventremove is timestamp when dot is removed
+        outputFile.write(str(int(eventend)-1)+",0\n")
         outputFile.write(eventend+",1\n")
+        outputFile.write(str(int(eventremove)-1)+",1\n")
         outputFile.write(eventremove+",0\n")
 
 if __name__ == "__main__":
