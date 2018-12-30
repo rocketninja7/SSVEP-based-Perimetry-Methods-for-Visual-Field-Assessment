@@ -1,6 +1,7 @@
 interval=500;
 period=1000;
 
+addpath('_func');
 data_dir='./newdata/';
 sti_f=[5];             % stimulus frequencies
 
@@ -30,7 +31,7 @@ for iFile=1: length(dataFiles)
     while stop==false
         intervalStart=Data.timestamp(startIndex);
         index=startIndex+1;
-        while (Data.timestamp(index)<intervalStart+interval)
+        while (Data.timestamp(index)<intervalStart+period)
             index=index+1;
             if index>size(Data.timestamp)
                 index=index-1;
@@ -38,7 +39,7 @@ for iFile=1: length(dataFiles)
                 break;
             end
         end
-        eegRaw=Data.eeg(startIndex:index,1:3);
+        eegRaw=Data.eeg(startIndex:index,1:2);
         %bandpass filtering of raw EEG
         if size(eegRaw)<24
             continue;
@@ -50,7 +51,17 @@ for iFile=1: length(dataFiles)
         ccc(intervalNo,1)=intervalStart;
         ccc(intervalNo,2)=max(r1);
         intervalNo=intervalNo+1;
-        startIndex=index+1;
+        intervalStart=Data.timestamp(startIndex);
+        index=startIndex+1;
+        while (Data.timestamp(index)<intervalStart+interval)
+            index=index+1;
+            if index>size(Data.timestamp)
+                index=index-1;
+                stop=true;
+                break;
+            end
+        end
+        startIndex=index;
     end
     dlmwrite(fullfile(data_dir,"ccc\",Data.fname),ccc,'precision', 13);
 end
